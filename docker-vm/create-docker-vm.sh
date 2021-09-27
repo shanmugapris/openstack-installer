@@ -59,3 +59,10 @@ sleep $WAITTIME
 openstack server show $VM_NAME -c addresses -f json | \
     python3 -c "import sys, json; print(json.load(sys.stdin)['addresses']['avimgmt'][0])" \
     | tr -d '\n' >| /tmp/docker-vm-ip
+
+if [ ! -f /tmp/docker-vm-ip -o ! -s /tmp/docker-vm-ip ]
+    openstack server show $VM_NAME -c addresses -f json | \
+    python3 -c "import sys, json; print(json.load(sys.stdin)['addresses'])" \
+    | cut -d "=" -f 2 \
+    | tr -d '\n' >| /tmp/docker-vm-ip	
+fi
